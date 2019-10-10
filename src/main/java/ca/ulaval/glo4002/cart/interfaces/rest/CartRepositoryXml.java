@@ -1,18 +1,19 @@
-package ca.ulaval.glo4002.cart.application.cart;
+package ca.ulaval.glo4002.cart.interfaces.rest;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import ca.ulaval.glo4002.cart.application.PersistenceException;
+import ca.ulaval.glo4002.cart.application.XmlUtils;
+import ca.ulaval.glo4002.cart.application.cart.CartList;
+import ca.ulaval.glo4002.cart.domain.cart.CartRepository;
+import ca.ulaval.glo4002.cart.domain.cart.Cart;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
-import ca.ulaval.glo4002.cart.application.PersistenceException;
-import ca.ulaval.glo4002.cart.application.XmlUtils;
-import ca.ulaval.glo4002.cart.domain.cart.Cart;
-
-public class CartRepository {
+public class CartRepositoryXml implements CartRepository {
     private static final String CART_STORAGE = "cart-storage";
 
     private static File storageFile;
@@ -21,7 +22,8 @@ public class CartRepository {
         storageFile = XmlUtils.createStorageFile(CART_STORAGE);
     }
 
-    public List<Cart> retrieveCarts() {
+    @Override
+    public List<Cart> getAll() {
         Unmarshaller unmarshaller = XmlUtils.createUnmarshaller();
         try {
             return ((CartList) unmarshaller.unmarshal(storageFile)).getCarts();
@@ -30,7 +32,8 @@ public class CartRepository {
         }
     }
 
-    public void persistCarts(List<Cart> carts) {
+    @Override
+    public void save(List<Cart> carts) {
         Marshaller marshaller = XmlUtils.createMarshaller();
         try {
             marshaller.marshal(new CartList(carts), storageFile);
